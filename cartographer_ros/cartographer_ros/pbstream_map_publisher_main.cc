@@ -65,8 +65,8 @@ void Run(const std::string& pbstream_filename, const std::string& map_topic,
     if (!reader.ReadProto(&proto)) {
       break;
     }
-    if (proto.has_submap()) {
-      const auto& submap = proto.submap();
+    if (proto.has_submap_with_id()) {
+      const auto& submap = proto.submap_with_id();
       const ::cartographer::mapping::SubmapId id{
           submap.submap_id().trajectory_id(),
           submap.submap_id().submap_index()};
@@ -75,7 +75,7 @@ void Run(const std::string& pbstream_filename, const std::string& map_topic,
               pose_graph.trajectory(id.trajectory_id)
                   .submap(id.submap_index)
                   .pose());
-      FillSubmapSlice(global_submap_pose, submap, &submap_slices[id]);
+      FillSubmapSlice(global_submap_pose, submap.submap(), &submap_slices[id]);
     }
   }
   CHECK(reader.eof());

@@ -44,5 +44,7 @@ options = {
 
 MAP_BUILDER.use_trajectory_builder_2d = true
 TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 10
+MAP_BUILDER.pose_graph.constraint_builder.global_localization_min_score = 0.35
+MAP_BUILDER.pose_graph.constraint_builder.min_score = 0.40
 
 return options

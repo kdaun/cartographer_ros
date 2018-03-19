@@ -56,7 +56,8 @@ class RosMapWritingPointsProcessor
   const std::string filestem_;
   PointsProcessor* const next_;
   ::cartographer::io::FileWriterFactory file_writer_factory_;
-  ::cartographer::mapping::RangeDataInserter2D range_data_inserter_;
+  ::cartographer::mapping::RangeDataInserter2DProbabilityGrid
+      range_data_inserter_;
   ::cartographer::mapping::ProbabilityGrid probability_grid_;
 };
 
