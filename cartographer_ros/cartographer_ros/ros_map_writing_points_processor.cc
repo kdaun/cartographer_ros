@@ -20,6 +20,7 @@
 #include "cartographer/io/image.h"
 #include "cartographer/io/probability_grid_points_processor.h"
 #include "cartographer_ros/ros_map.h"
+#include "cartographer/mapping/2d/range_data_inserter_2d.h"
 
 namespace cartographer_ros {
 
