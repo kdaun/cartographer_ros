@@ -22,6 +22,10 @@
 #include <time.h>
 #include <chrono>
 
+#include "cartographer/mapping/id.h"
+#include "cartographer/mapping/map_builder.h"
+#include "cartographer/mapping/pose_graph.h"
+#include "cartographer/mapping/pose_graph_interface.h"
 #include "cartographer_ros/node.h"
 #include "cartographer_ros/playable_bag.h"
 #include "cartographer_ros/split_string.h"
@@ -66,6 +70,8 @@ DEFINE_double(skip_seconds, 0,
 
 namespace cartographer_ros {
 
+using ::cartographer::transform::Rigid3d;
+
 constexpr char kClockTopic[] = "clock";
 constexpr char kTfStaticTopic[] = "/tf_static";
 constexpr char kTfTopic[] = "tf";
@@ -76,7 +82,10 @@ constexpr int kSingleThreaded = 1;
 // always interpolate.
 const ::ros::Duration kDelay = ::ros::Duration(1.0);
 
-void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
+void RunOfflineNodeBase(
+    const MapBuilderFactory& map_builder_factory,
+    std::vector<cartographer::mapping::PoseGraphInterface::Constraint>*
+        benchmark_constraints) {
   CHECK(!FLAGS_configuration_directory.empty())
       << "-configuration_directory is missing.";
   CHECK(!FLAGS_configuration_basenames.empty())
@@ -339,16 +348,65 @@ void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
   LOG(INFO) << "Peak memory usage: " << usage.ru_maxrss << " KiB";
 #endif
 
+  const auto trajectory_node_poses =
+      node.map_builder_bridge_.map_builder_->pose_graph()
+          ->GetTrajectoryNodePoses();
+  const auto submap_poses =
+      node.map_builder_bridge_.map_builder_->pose_graph()->GetAllSubmapPoses();
+  const auto constraints =
+      node.map_builder_bridge_.map_builder_->pose_graph()->constraints();
+
+  int total_constraints = 0;
+  int accepted_constraints = 0;
+  float residual_distance_threshold = 0.002;
+  for (const auto& constraint : constraints) {
+    if (constraint.tag !=
+        cartographer::mapping::PoseGraph::Constraint::INTER_SUBMAP) {
+      continue;
+    }
+    const auto submap_it = submap_poses.find(constraint.submap_id);
+    if (submap_it == submap_poses.end()) {
+      continue;
+    }
+    const auto& submap_pose = submap_it->data.pose;
+    const auto node_it = trajectory_node_poses.find(constraint.node_id);
+    if (node_it == trajectory_node_poses.end()) {
+      continue;
+    }
+    const auto& trajectory_node_pose = node_it->data.global_pose;
+    const Rigid3d constraint_pose = submap_pose * constraint.pose.zbar_ij;
+
+    LOG(INFO) << (constraint_pose.translation() -
+                  trajectory_node_pose.translation())
+                     .norm();
+    total_constraints++;
+    if ((constraint_pose.translation() - trajectory_node_pose.translation())
+            .norm() < residual_distance_threshold) {
+      accepted_constraints++;
+      if (benchmark_constraints && benchmark_constraints->size() < 1) benchmark_constraints->push_back(constraint);
+    }
+  }
+  LOG(INFO) << accepted_constraints << " / " << total_constraints
+            << " constraints accepted for evaluation";
+  /*
   if (::ros::ok() && bag_filenames.size() > 0) {
     const std::string output_filename = bag_filenames.front();
     const std::string suffix = ".pbstream";
     const std::string state_output_filename = output_filename + suffix;
     LOG(INFO) << "Writing state to '" << state_output_filename << "'...";
     node.SerializeState(state_output_filename);
-  }
+  }*/
   if (FLAGS_keep_running) {
     ::ros::waitForShutdown();
   }
+}
+
+void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
+  std::vector<cartographer::mapping::PoseGraphInterface::Constraint>
+      benchmark_constraints;
+  RunOfflineNodeBase(map_builder_factory, &benchmark_constraints);
+  cartographer::mapping::evaluation_constraints = benchmark_constraints;
+  RunOfflineNodeBase(map_builder_factory, nullptr);
 }
 
 }  // namespace cartographer_ros

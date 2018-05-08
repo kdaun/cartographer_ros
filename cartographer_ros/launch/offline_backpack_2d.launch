@@ -15,7 +15,7 @@
 -->
 
 <launch>
-  <arg name="no_rviz" default="false"/>
+  <arg name="no_rviz" default="true"/>
   <param name="/use_sim_time" value="true" />
 
   <group unless="$(arg no_rviz)">

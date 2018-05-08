@@ -86,7 +86,7 @@ class MapBuilderBridge {
 
   SensorBridge* sensor_bridge(int trajectory_id);
 
- private:
+ public:
   void OnLocalSlamResult(
       const int trajectory_id, const ::cartographer::common::Time time,
       const ::cartographer::transform::Rigid3d local_pose,

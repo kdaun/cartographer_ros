@@ -116,7 +116,7 @@ class Node {
 
   ::ros::NodeHandle* node_handle();
 
- private:
+ public:
   struct Subscriber {
     ::ros::Subscriber subscriber;
 
