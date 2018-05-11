@@ -319,7 +319,7 @@ void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
   // final optimization, serialization, and optional indefinite spinning at the
   // end.
   clock_republish_timer.start();
-  node.RunFinalOptimization();
+  //node.RunFinalOptimization();
 
   const std::chrono::time_point<std::chrono::steady_clock> end_time =
       std::chrono::steady_clock::now();
@@ -328,7 +328,7 @@ void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
                                                                 start_time)
           .count();
 
-  LOG(INFO) << "Elapsed wall clock time: " << wall_clock_seconds << " s";
+  LOG(INFO) << "Elapsed wall clock time:  " << wall_clock_seconds << " s";
 #ifdef __linux__
   timespec cpu_timespec = {};
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpu_timespec);

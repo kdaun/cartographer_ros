@@ -305,6 +305,7 @@ Node::ComputeExpectedSensorIds(
            topics.point_cloud2_topic, options.num_point_clouds)) {
     expected_topics.insert(SensorId{SensorType::RANGE, topic});
   }
+
   // For 2D SLAM, subscribe to the IMU if we expect it. For 3D SLAM, the IMU is
   // required.
   if (node_options_.map_builder_options.use_trajectory_builder_3d() ||
