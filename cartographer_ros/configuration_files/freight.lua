@@ -45,14 +45,17 @@ options = {
 MAP_BUILDER.use_trajectory_builder_2d = true
 
 TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 30
-TRAJECTORY_BUILDER_2D.use_imu_data = false
+--TRAJECTORY_BUILDER_2D.use_imu_data = false
 TRAJECTORY_BUILDER_2D.min_range = 0.
 TRAJECTORY_BUILDER_2D.max_range = 20.
 TRAJECTORY_BUILDER_2D.missing_data_ray_length = 5.
+
 POSE_GRAPH.constraint_builder.min_score = 0.65
 POSE_GRAPH.optimization_problem.huber_scale = 3
-POSE_GRAPH.optimize_every_n_nodes = 100000000000
 
+POSE_GRAPH.optimize_every_n_nodes = 100000000000
+POSE_GRAPH.global_sampling_ratio = 0.0
+POSE_GRAPH.constraint_builder.sampling_ratio = 0.0
 
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 10
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 40
@@ -62,7 +65,31 @@ TRAJECTORY_BUILDER_2D.motion_filter.max_distance_meters = 0.
 TRAJECTORY_BUILDER_2D.motion_filter.max_angle_radians = math.rad(0.2)
 
 
---TRAJECTORY_BUILDER_2D.submaps.map_type = "TSDF"
---TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 1000
+TRAJECTORY_BUILDER_2D.submaps.map_type = "TSDF"
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 200
+POSE_GRAPH.constraint_builder.ceres_scan_matcher.occupied_space_weight = 400.  
 
+
+
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.truncation_distance = 0.3
+
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.enable = true
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.project_sdf_distance_to_scan_normal  = true
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.scale_update_weight_to_angle_scan_normal_to_ray  = true
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.scale_update_weight_to_distance_cell_to_hit  = true
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.update_weight_angle_scan_normal_to_ray_kernel_variance  = 0.5
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.update_weight_distance_cell_to_hit_kernel_variance  = 0.4
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.update_weight  = 2.
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.range_data_inserter_type = "CONSTANT_WEIGHT"
+
+        
+          
+
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.num_normal_samples  = 8
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.search_window_num_points  = 32
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.search_window_radius  = 0.5
+
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.num_normal_samples  = 2
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.search_window_num_points  = 4
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf.normal_estimation.search_window_radius  = 0.25
 return options
