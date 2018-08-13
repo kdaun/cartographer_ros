@@ -43,28 +43,29 @@ options = {
   landmarks_sampling_ratio = 1.,
 }
 
+--TRAJECTORY_BUILDER_2D.max_z = 1.7
 
 POSE_GRAPH.constraint_builder.sampling_ratio = 1e-12
 POSE_GRAPH.constraint_builder.min_score = 10.00
 MAP_BUILDER.use_trajectory_builder_2d = true
 TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 10
 TRAJECTORY_BUILDER_2D.max_range = 50
-
-TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight  = 1.0
-TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight  = 10.0
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.probability_grid_range_data_inserter.hit_probability  = 0.55
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.probability_grid_range_data_inserter.miss_probability  = 0.49
-
-
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.range_data_inserter_type = "TSDF_INSERTER_2D"
 TRAJECTORY_BUILDER_2D.submaps.grid_options_2d.grid_type = "TSDF"
-TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.project_sdf_distance_to_scan_normal = true
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_free_space = false
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_weight_angle_scan_normal_to_ray_kernel_bandwith = 0.3
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_weight_distance_cell_to_hit_kernel_bandwith = 0.7
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_weight_range_exponent = 1
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_free_space = false
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.truncation_distance = 0.25
-TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.maximum_weight = 10.0
-TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 100
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_weight_range_exponent = 0
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 2.5
+
+POSE_GRAPH.constraint_builder.ceres_scan_matcher.occupied_space_weight = 50.   
+
+                         
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight  = 1.5
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight  = 1
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_weight_angle_scan_normal_to_ray_kernel_bandwith   = 0.3
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.update_weight_distance_cell_to_hit_kernel_bandwith  = 0.7
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.truncation_distance  = 0.15
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.tsdf_range_data_inserter.maximum_weight  = 10.0
 return options
